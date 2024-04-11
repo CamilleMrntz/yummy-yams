@@ -1,17 +1,13 @@
-FROM node:16.19-alpine
+FROM node:20
 
-RUN apk --no-cache add curl
-RUN apk add make g++ python3 git
-RUN npm i -g node-pre-gyp
-
-RUN mkdir /api
-WORKDIR /api
+WORKDIR /app
 
 COPY package.json .
-COPY npm* .
-RUN npm i
 
-COPY src ./src
-COPY .env .
+RUN npm install
 
-CMD npm start
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

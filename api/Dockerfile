@@ -1,17 +1,21 @@
-FROM node:16.19-alpine
+# Utilisation de l'image Node.js avec la version 20
+FROM node:20
 
-RUN apk --no-cache add curl
-RUN apk add make g++ python3 git
-RUN npm i -g node-pre-gyp
+# Définir le répertoire de travail dans le conteneur
+WORKDIR /usr/src/app
 
-RUN mkdir /api
-WORKDIR /api
+# Copier les fichiers package.json et package-lock.json pour installer les dépendances
+COPY package*.json ./
 
-COPY package.json .
-COPY npm* .
-RUN npm i
+# Installer les dépendances
+RUN npm install
 
-COPY src ./src
-COPY .env .
+# Copier le reste des fichiers de l'application
+COPY . .
 
-CMD npm start
+# Exposer le port 3001 (port utilisé par l'API)
+EXPOSE 3001
+
+# Commande pour démarrer l'application Node.js
+CMD ["node", "app.js"]  
+# Assurez-vous que "app.js" est le fichier principal de votre application
