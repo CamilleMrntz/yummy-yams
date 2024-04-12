@@ -22,8 +22,28 @@ services:
     tty: true
 
   mongo:
+    build: .
     image: mongo:latest
+    container_name: mongo
     ports:
-      - 27017:27017
+      - "27017:27017"
     volumes:
       - ./data:/data/db
+      - ./pastries.json:/tmp/pastries.json
+      - ./importscript.sh:/importscript.sh
+    
+    #environment:
+    #  MONGO_INITDB_ROOT_USERNAME: root
+    #  MONGO_INITDB_ROOT_PASSWORD: password
+    #  MONGO_INITDB_DATABASE: yams_db
+    #volumes:
+    #  - ./data:/data/db
+    #  - ./pastries.json:/tmp/pastries.json
+    #  - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+
+
+    
+      
+    #volumes:
+    #  - ./pastries.json:/usr/src/pastries.json
+    #  - docker_mongo_data:/data/db
