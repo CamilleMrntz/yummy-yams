@@ -22,7 +22,6 @@ services:
     tty: true
 
   mongo:
-    build: .
     image: mongo:latest
     container_name: mongo
     ports:
