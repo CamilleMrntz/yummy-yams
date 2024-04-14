@@ -5,6 +5,7 @@ function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
+
   async function loginUser(event) {
     event.preventDefault()
     const response = await fetch('http://localhost:3001/login', {
@@ -19,12 +20,20 @@ function Login() {
   })
 
     const data = await response.json()
+
+    if (data.user) {
+      localStorage.setItem('token', data.user)
+      alert('Login successful')
+      window.location.href = '/yummy-game'
+    } else {
+      alert('Please check your username and password')
+    }
     console.log(data)
   }
 
   return (
     <div>
-      <h1>Registrer</h1>
+      <h1>Login</h1>
       <form onSubmit={loginUser}>
         <input
           value={email}
@@ -40,7 +49,7 @@ function Login() {
           placeholder="Password"
         />
         <br />
-        <input type="submit" value="Register" />
+        <input type="submit" value="Login" />
       </form>
     </div>
   );

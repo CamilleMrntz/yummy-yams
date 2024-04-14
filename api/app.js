@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 import Pastry from "./models/pastries.mjs"
 import cors from "cors"
 import User from "./models/users.mjs"
+import jwt from "jsonwebtoken"
 
 const app = express()
 const port = 3001
@@ -31,10 +32,12 @@ app.post('/registration', async (req, res) => {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
+      chancesLeft: 3,
     })
     res.json({ status: 'ok'})
   } catch (error) {
-    res.json({ status: 'error', error: 'Duplicated email' })
+    console.log(error)
+    res.json({ status: 'error', error: error })
   }
 })
 
@@ -45,9 +48,14 @@ app.post('/login', async (req, res) => {
     password: req.body.password,
   })
   if (user) {
-    res.json({ status: 'ok', user: true })
+    const token = jwt.sign({
+      name: user.name,
+      email: user.email,
+    }, 'secret123') // TODO : replace secret123 by an environment variable .env
+
+    return res.json({ status: 'ok', user: token })
   } else {
-    res.json({ status: 'error', user: false })
+    return res.json({ status: 'error', user: false })
   }
   
   

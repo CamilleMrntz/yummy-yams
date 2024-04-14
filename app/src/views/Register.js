@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Register() {
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  //const chancesLeft = 3
+
+  const navigate = useNavigate()
 
   async function registerUser(event) {
     event.preventDefault()
@@ -18,9 +22,12 @@ function Register() {
         email,
         password
       }),
-  })
+    })
 
     const data = await response.json()
+    if (data.status === 'ok') {
+      navigate('/login')
+    }
     console.log(data)
   }
 
