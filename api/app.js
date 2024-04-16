@@ -90,6 +90,20 @@ app.get("/pastries-left", async (req, res) => {
     }
 })
 
+// Return the list of images
+app.get("/pastries-img", async(req, res) => {
+  try {
+    const pastries = await Pastry.find()
+    let pastriesImg = []
+    pastries.forEach(pastry => {
+      pastriesImg.push(pastry.image)
+    });
+    res.json(pastriesImg)
+  } catch (err) {
+        console.error("Erreur :", err)
+        res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des pâtisseries" })
+    }
+})
 
 
 app.listen(port, () => console.log(`App démarrée sur http://localhost:${port}`));

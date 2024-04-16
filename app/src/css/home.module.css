@@ -1,0 +1,25 @@
+@keyframes slideRight {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+.caroussel {
+    display: flex;
+}
+  
+.img_caroussel {
+    display: flex;
+    overflow: hidden; /* Assurez-vous que les images dépassant de la zone visible sont cachées */
+}
+  
+.img_caroussel img {
+    width: 14%;
+    aspect-ratio: 1;
+    object-fit: contain;
+    animation: slideRight 10s linear infinite; /* Utilisez l'animation CSS pour déplacer les images */
+}  
+
