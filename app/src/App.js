@@ -4,10 +4,12 @@ import Home from "./views/Home"
 import Login from "./views/Login"
 import Register from "./views/Register"
 import YummyGame from "./views/YummyGame"
+import Header from "./views/Header"
 
 const App = () => {
     return (
         <div>
+            <Header />
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<Home />} />
