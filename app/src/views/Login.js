@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import styles from './../css/connexion.module.css';
 
 function Login() {
 
@@ -32,7 +33,7 @@ function Login() {
   }
 
   return (
-    <div>
+    <div className={styles.main}>
       <h1>Login</h1>
       <form onSubmit={loginUser}>
         <input

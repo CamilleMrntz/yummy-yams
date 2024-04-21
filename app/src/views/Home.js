@@ -25,12 +25,14 @@ function Home() {
     }, []);
 
     return(
-        <div>
+        <div className={styles.main}>
             <h1>Yummy Yams</h1>
-            <p>Joue et tente de gagner des patisseries !</p>
-            <p>Pour jouer connecte toi 🚀</p>
-            <button onClick={register}>Créer mon compte</button>
-            <button onClick={login}>Se connecter</button>
+            <p>Joue et tente de gagner des pâtisseries !</p>
+            <p>Pour jouer, connecte-toi 🚀</p>
+            <div className={styles.buttons}>
+                <button onClick={register}>Créer un compte</button>
+                <button onClick={login}>Se connecter</button>
+            </div>
             {pictures.length > 0 && (
             <div className={styles.img_caroussel}>
                 {pictures.map((item) => (

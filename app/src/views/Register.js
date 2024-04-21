@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styles from './../css/connexion.module.css';
 
 function Register() {
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  //const chancesLeft = 3
 
   const navigate = useNavigate()
 
@@ -32,10 +32,10 @@ function Register() {
   }
 
   return (
-    <div>
+    <div className={styles.main}>
       <h1>Registrer</h1>
       <form onSubmit={registerUser}>
-      <input
+        <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           type="text"
