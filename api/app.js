@@ -53,6 +53,7 @@ app.post('/login', async (req, res) => {
       email: user.email,
     }, 'secret123') // TODO : replace secret123 by an environment variable .env
 
+    console.log(token)
     return res.json({ status: 'ok', user: token })
   } else {
     return res.json({ status: 'error', user: false })

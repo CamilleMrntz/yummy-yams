@@ -1,29 +1,32 @@
 import React, { useEffect } from "react"
-import { useJwt } from "react-jwt"
 import { useNavigate } from "react-router-dom"
-//import jwt from 'jsonwebtoken'
+import { useJwt, decodeToken, isExpired } from "react-jwt"
 
 const YummyGame = () => {
     const navigate = useNavigate()
-    
-    // console.log(token)
-    // console.log(decodedToken)
-    // console.log(isExpired)
-    let data = ""
+
+    const token = localStorage.getItem('token')
+    console.log("token : " + token)
+
+    //const { decodedToken, isExpired } = useJwt(token);
+    //console.log("token expired : " + isExpired)
+
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
-        //const { isExpired } = useJwt(token)
         if (token) {
-            //const user = jwt.decode(token)
-            //if (!user) {
+            let isTokenExpired = isExpired(token)
+            console.log("Token expired : " + isTokenExpired)
+            let user = decodeToken(token)
+            console.log("user name : " + user.name)
+            if (!user) {
                 localStorage.removeItem('token')
-            } else {
-                data = localStorage.getItem('data')
-                console.log("data : " + data) 
-                console.log("token : " + token) 
+                console.log("Token removed")
             }
-        //}
+        } else {
+            let data = localStorage.getItem('data')
+            console.log("data : " + data) 
+            console.log("token : " + token) 
+        }
     }, [])
 
     //const { decodedToken } = useJwt(token)
@@ -32,12 +35,9 @@ const YummyGame = () => {
     return (
         <div>
             <h1>Roll the dices</h1>
-            {/* {decodedToken && ( */}
-        {/* <p>Welcome, {decodedToken.name}!</p> */}
-        {/* )} */}
-            {data && (
-                <p>Welcome, {data.name}!</p>
-            )}
+            {/* {user && (
+                <p>Welcome, {user.name}!</p>
+            )} */}
         </div>
     )
 }
