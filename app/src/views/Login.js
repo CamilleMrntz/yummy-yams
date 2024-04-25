@@ -18,7 +18,7 @@ function Login() {
         email,
         password
       }),
-  })
+    })
 
     const data = await response.json()
 

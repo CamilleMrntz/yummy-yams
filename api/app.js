@@ -107,4 +107,26 @@ app.get("/pastries-img", async(req, res) => {
 })
 
 
+
+
+
+// Dice Game
+function getRandomNumber() {
+  return Math.floor(Math.random() * 6) + 1;
+}
+
+
+app.post("/rolling-dices", async(req, res) => {
+  let numbers = [
+    getRandomNumber(),
+    getRandomNumber(),
+    getRandomNumber(),
+    getRandomNumber(),
+    getRandomNumber()
+  ]
+  console.log(numbers)
+  return res.json(numbers)
+})
+
+
 app.listen(port, () => console.log(`App démarrée sur http://localhost:${port}`));
