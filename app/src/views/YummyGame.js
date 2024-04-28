@@ -5,7 +5,7 @@ import { useJwt, decodeToken, isExpired } from "react-jwt"
 import styles from './../css/yummyGame.module.css';
 
 const YummyGame = () => {
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
 
     const token = localStorage.getItem('token')
     console.log("token : " + token)
@@ -47,9 +47,18 @@ const YummyGame = () => {
             }
         })
 
-        const dices = await response.json()
-        console.log(dices)
-        setDices(dices)
+        if (response.ok) {
+            let dices = await response.json()
+            console.log(dices)
+            if (!Array.isArray(dices)) {
+                console.error("Cannot roll dices more than 3 times:", dices);
+                dices = [0, 0, 0, 0, 0]
+            }
+            setDices(dices)
+        } else {
+            const errorResponse = await response.json()
+            console.error(errorResponse)
+        }  
     }
 
 

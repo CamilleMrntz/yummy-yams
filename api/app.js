@@ -125,7 +125,31 @@ app.post("/rolling-dices", async(req, res) => {
     getRandomNumber()
   ]
   console.log(numbers)
-  return res.json(numbers)
+
+  const token = req.headers['x-access-token']
+
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const email = decoded.email
+
+    const user = await User.findOne({ email: email })
+
+    if (user) {
+      if (user.chancesLeft <= 0) {
+        return res.json({ status: 'error', error: 'No more changes. The dices have been rolled 3 times' })
+      }
+      user.chancesLeft--
+      await user.save()
+      return res.json(numbers)
+
+    } else {
+      throw new Error('User not found')
+    }
+
+  } catch (error) {
+		console.log(error)
+		return res.status(500).json({ status: 'error', error: 'Invalid token or user not found' })
+	}
 })
 
 

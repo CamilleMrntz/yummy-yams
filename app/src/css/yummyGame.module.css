@@ -3,28 +3,25 @@
 :root {
 	margin: 0;
 	text-align: center;
-	background-color: #031638;
 }
 
 h1 {
 	/* font-family: Englebert, serif; */
-	font-size: 6rem;
-	margin: 0;
-	color: rgb(0, 180, 180);
+	margin: 30px;
 }
 
-play_button {
+.play_button {
 	padding: 0.75rem 1.5rem;
 	border-radius: 0.3rem;
 	border: none;
 	background-color: yellow;
 	cursor: pointer;
 	font-weight: bold;
-	font-size: 1.5rem;
+	font-size: 1.2rem;
 	color: black;
 	transition: all 300ms;
 }
-play_button:hover {
+.play_button:hover {
 	color: rgb(0, 180, 180);
 	box-shadow: 0 0 0.5rem rgb(0, 180, 180);
 }
@@ -33,9 +30,9 @@ play_button:hover {
 	margin-top: 1rem;
 }
 
-.dice-container {
+.dice_container {
 	perspective: 500px;
-	display: inline-flex;
+	display: inline-block;
 }
 
 .dice {
@@ -44,7 +41,7 @@ play_button:hover {
 	height: 3rem;
 	margin: 0.75rem;
 	
-	position: relative;
+	/* position: relative; */
 	
 	transform-style: preserve-3d;
 	transform-origin: 50%;
