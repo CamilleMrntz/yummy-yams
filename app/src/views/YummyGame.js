@@ -5,19 +5,14 @@ import { useJwt, decodeToken, isExpired } from "react-jwt"
 import styles from './../css/yummyGame.module.css';
 
 const YummyGame = () => {
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
 
     const token = localStorage.getItem('token')
     console.log("token : " + token)
 
     const [dices, setDices] = useState([0,0,0,0,0])
-	
-	// function launch() {
-	// 	setDices(rollDices())
-	// }
-
-    //const { decodedToken, isExpired } = useJwt(token);
-    //console.log("token expired : " + isExpired)
+    const [message, setMessage] = useState('');
+    const [chancesLeft, setChancesLeft] = useState(0);
 
 
     useEffect(() => {
@@ -29,6 +24,8 @@ const YummyGame = () => {
             if (!user) {
                 localStorage.removeItem('token')
                 console.log("Token removed")
+            } else {
+                fetchChancesLeft(user.email);
             }
         } else {
             let data = localStorage.getItem('data')
@@ -37,28 +34,24 @@ const YummyGame = () => {
         }
     }, [])
 
-    async function rollDices(event) {
-        event.preventDefault()
-        const response = await fetch('http://localhost:3001/rolling-dices', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': localStorage.getItem('token'),
+    async function fetchChancesLeft(email) {
+        try {
+            const response = await fetch(`http://localhost:3001/chances-left/${email}`, {
+                headers: {
+                    'x-access-token': token,
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Chances left:", data);
+                setChancesLeft(data);
+                setMessage(data <= 0 ? 'You rolled the dices 3 times.' : `You have ${data} chances left.`);
+            } else {
+                console.error("Failed to fetch chances left:", response.statusText);
             }
-        })
-
-        if (response.ok) {
-            let dices = await response.json()
-            console.log(dices)
-            if (!Array.isArray(dices)) {
-                console.error("Cannot roll dices more than 3 times:", dices);
-                dices = [0, 0, 0, 0, 0]
-            }
-            setDices(dices)
-        } else {
-            const errorResponse = await response.json()
-            console.error(errorResponse)
-        }  
+        } catch (error) {
+            console.error("Error fetching chances left:", error);
+        }
     }
 
 
@@ -89,6 +82,45 @@ const YummyGame = () => {
         )
     }
 
+    async function rollDices(event) {
+        event.preventDefault()
+        const response = await fetch('http://localhost:3001/rolling-dices', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': localStorage.getItem('token'),
+            }
+        })
+
+        if (response.ok) {
+            let data = await response.json()
+            console.log(data.dices)
+            if (data.chancesLeft === 0) {
+                console.error("Cannot roll dices more than 3 times:", data);
+            }
+            if (data.numberOfPastriesWon !== 0) {
+                console.log("pastries won : " + data.numberOfPastriesWon)
+                localStorage.setItem('numberOfPastriesWon', data.numberOfPastriesWon)
+                localStorage.setItem('date', new Date())
+                navigate('/choose-pastries')
+            }
+            setDices(data.dices)
+            setMessage(data.chancesLeft === 0 ? 'You rolled the dices 3 times.' : 'You can roll ' + data.chancesLeft + ' more time.');
+        } else {
+            const errorResponse = await response.json()
+            console.error(errorResponse)
+        }
+    }
+
+
+    // function informPlayer(data) {
+    //     console.log("dices : " + data.dices)
+    //     if (data.dices.includes(0)) {
+    //         return <p>You rolled the dices 3 times.</p>
+    //     } else {
+    //         return <p>You have .. more chances</p>
+    //     }
+    // }
 
 
     return (
@@ -97,6 +129,7 @@ const YummyGame = () => {
             {/* {user && (
                 <p>Welcome, {user}!</p>
             )} */}
+            {message && <p>{message}</p>}
             {dices.map((dice, index) => <Dice key={gsap.utils.random()} value={dice} />)}
 		
             <div className={styles.actions}>

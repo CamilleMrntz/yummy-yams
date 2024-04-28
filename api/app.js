@@ -79,7 +79,7 @@ app.get("/pastries", async (req, res) => {
 app.get("/pastries-left", async (req, res) => {
     try {
         const pastries = await Pastry.find()
-        var pastriesLeft = 0
+        let pastriesLeft = 0
         pastries.forEach(pastry => {
             pastriesLeft += pastry.stock
         });
@@ -115,16 +115,78 @@ function getRandomNumber() {
   return Math.floor(Math.random() * 6) + 1;
 }
 
+function isThereTwoPairs(dices) {
+  const occurrences = {};
+  for (const dice of dices) {
+      occurrences[dice] = (occurrences[dice] || 0) + 1;
+  }
+
+  // Compter le nombre de paires
+  let pairCount = 0;
+  for (const value of Object.values(occurrences)) {
+      if (value === 2) {
+          pairCount++;
+      }
+  }
+
+  return pairCount === 2;
+}
+
+function isThereFourIndenticalNumbers(dices) {
+  const identicalCount = dices.filter(dice => dice === dices[0]).length;
+  return identicalCount === 4
+}
+
+function isThereFiveIndenticalNumbers(dices) {
+  const allEqual = dices.every((dice, index) => dice === dices[0]);
+  return allEqual
+}
+
+function numberOfPastriesWon(dices) {
+  if (isThereFiveIndenticalNumbers(dices)) {
+    return 3
+  } else if (isThereFourIndenticalNumbers(dices)) {
+    return 2
+  } else if (isThereTwoPairs(dices)) {
+    return 1
+  } else {
+    return 0
+  }
+}
+
+app.get("/chances-left/:email", async (req, res) => {
+  try {
+    const user = await User.findOne({
+      email: req.params.email,
+    })
+
+    console.log(user)
+    let chancesLeft = user.chancesLeft
+    console.log("chances left : " + chancesLeft)
+    res.json(chancesLeft.toString())
+  } catch (err) {
+      console.error("Erreur :", err)
+      res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des chances restantes" })
+  }
+})
+
 
 app.post("/rolling-dices", async(req, res) => {
-  let numbers = [
+  let dices = [
     getRandomNumber(),
     getRandomNumber(),
     getRandomNumber(),
     getRandomNumber(),
     getRandomNumber()
   ]
-  console.log(numbers)
+  // let dices = [
+  //   4,
+  //   4,
+  //   4,
+  //   4,
+  //   getRandomNumber()
+  // ]
+  console.log(dices)
 
   const token = req.headers['x-access-token']
 
@@ -135,12 +197,19 @@ app.post("/rolling-dices", async(req, res) => {
     const user = await User.findOne({ email: email })
 
     if (user) {
+      let won = 0
       if (user.chancesLeft <= 0) {
-        return res.json({ status: 'error', error: 'No more changes. The dices have been rolled 3 times' })
+        dices = [0, 0, 0, 0, 0]
+        return res.json({ status: 'error', error: 'No more changes. The dices have been rolled 3 times', chancesLeft: user.chancesLeft, dices: dices, numberOfPastriesWon: won })
+      }
+      
+      if (numberOfPastriesWon(dices) != 0) {
+        won = numberOfPastriesWon(dices)
+        console.log("pastries won " + won)
       }
       user.chancesLeft--
       await user.save()
-      return res.json(numbers)
+      return res.json({ dices: dices, chancesLeft: user.chancesLeft, numberOfPastriesWon: won })
 
     } else {
       throw new Error('User not found')
