@@ -172,20 +172,20 @@ app.get("/chances-left/:email", async (req, res) => {
 
 
 app.post("/rolling-dices", async(req, res) => {
-  let dices = [
-    getRandomNumber(),
-    getRandomNumber(),
-    getRandomNumber(),
-    getRandomNumber(),
-    getRandomNumber()
-  ]
   // let dices = [
-  //   4,
-  //   4,
-  //   4,
-  //   4,
+  //   getRandomNumber(),
+  //   getRandomNumber(),
+  //   getRandomNumber(),
+  //   getRandomNumber(),
   //   getRandomNumber()
   // ]
+  let dices = [
+    4,
+    4,
+    4,
+    4,
+    getRandomNumber()
+  ]
   console.log(dices)
 
   const token = req.headers['x-access-token']
@@ -220,6 +220,22 @@ app.post("/rolling-dices", async(req, res) => {
 		return res.status(500).json({ status: 'error', error: 'Invalid token or user not found' })
 	}
 })
+
+// endpoint to get the pastries left to win
+app.get("/pastries-left-to-win", async(req, res) => {
+  try {
+    let pastriesLeft = await Pastry.find({
+      stock: { $gt: 0 },
+    })
+    res.json(pastriesLeft)
+  } catch (err) {
+        console.error("Erreur :", err)
+        res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des pâtisseries" })
+    }
+})
+
+// endpoint to post the pastries choosed (name of the pastry, date and hour of winning, number of pastries won)
+
 
 
 app.listen(port, () => console.log(`App démarrée sur http://localhost:${port}`));

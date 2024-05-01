@@ -10,7 +10,9 @@ function Header() {
 
     return(
         <div className={styles.main}>
-            <button onClick={home}>Home</button>
+            <button onClick={home}>            
+                <img src="/images/croissants.webp" alt="croissant" />
+            </button>
         </div>
     );
 }

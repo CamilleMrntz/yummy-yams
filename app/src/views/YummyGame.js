@@ -101,7 +101,7 @@ const YummyGame = () => {
             if (data.numberOfPastriesWon !== 0) {
                 console.log("pastries won : " + data.numberOfPastriesWon)
                 localStorage.setItem('numberOfPastriesWon', data.numberOfPastriesWon)
-                localStorage.setItem('date', new Date())
+                localStorage.setItem('winningDate', new Date())
                 navigate('/choose-pastries')
             }
             setDices(data.dices)

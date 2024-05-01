@@ -36,7 +36,7 @@ function Home() {
             {pictures.length > 0 && (
             <div className={styles.img_caroussel}>
                 {pictures.map((item) => (
-                    <img key={item} src={`/images/${item}`} alt={item} />
+                    <img key={item} src={`/images/pastries/${item}`} alt={item} />
                 ))}
             </div>
             )}
