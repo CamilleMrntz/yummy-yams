@@ -5,6 +5,7 @@ import Login from "./views/Login"
 import Register from "./views/Register"
 import YummyGame from "./views/YummyGame"
 import ChoosePastries from "./views/ChoosePastries"
+import Winners from "./views/Winners"
 import Header from "./views/Header"
 
 const App = () => {
@@ -18,6 +19,7 @@ const App = () => {
                     <Route path="/register" element={<Register />} />
                     <Route path="/yummy-game" element={<YummyGame />} />
                     <Route path="/choose-pastries" element={<ChoosePastries />} />
+                    <Route path="/winners" element={<Winners />} />
                 </Routes>   
             </BrowserRouter>
             

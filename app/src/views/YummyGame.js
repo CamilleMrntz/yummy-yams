@@ -124,7 +124,7 @@ const YummyGame = () => {
 
 
     return (
-        <div>
+        <div className={styles.main}>
             <h1>Roll the dices</h1>
             {/* {user && (
                 <p>Welcome, {user}!</p>

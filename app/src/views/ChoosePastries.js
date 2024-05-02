@@ -1,7 +1,10 @@
 import React , { useState, useEffect }from "react";
+import { useNavigate } from 'react-router-dom';
 import styles from './../css/choosePastries.module.css';
 
 function ChoosePastries() {
+
+    const navigate = useNavigate()
 
     const numberOfPastriesWon = localStorage.getItem('numberOfPastriesWon')
     const winningDate = localStorage.getItem('winningDate')
@@ -22,8 +25,12 @@ function ChoosePastries() {
         fetch("http://localhost:3001/pastries-left-to-win")
         .then(res => res.json())
         .then(
-            (result) => {
-                setPastries(result)
+            (stock) => {
+                // si le nombre de patisseries en stock est inferieur au nombre de patisseries gagnées
+                if (stock.length < numberOfPastriesWon) {
+                    localStorage.setItem('numberOfPastriesWon', stock.length)
+                }
+                setPastries(stock)
             }
         )
     }, []);
@@ -77,16 +84,18 @@ function ChoosePastries() {
                 body: JSON.stringify({
                     pastriesChoosed: pastriesChoosed,
                     winningDate: winningDate,
-                    numberOfPastriesWon: numberOfPastriesWon,
+                    numberOfPastriesWon: pastriesChoosedContainer.childElementCount,
                 }),
             })
+
+            navigate('/')
         }
         
     }
 
 
     return(
-        <div>
+        <div className={styles.main}>
             {<p>Congratulations !!! You can choose {numberOfPastriesWon} pastries.</p>}
             {pastries.length > 0 && (
             <div className={styles.pastries_container}>

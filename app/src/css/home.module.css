@@ -4,14 +4,14 @@
   align-items: center;
 }
 
+h1 {
+  color:  rgb(144, 111, 187);
+}
+
 .buttons {
     display: flex;
     justify-content: center;
-}
-
-.buttons button {
-  padding: 5px;
-  margin: 5px;
+    margin-block: 20px;
 }
   
 .img_caroussel {
@@ -29,3 +29,10 @@
     border-radius: 5px;
 }  
 
+.game_over {
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}

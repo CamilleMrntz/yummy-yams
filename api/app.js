@@ -221,7 +221,7 @@ app.post("/rolling-dices", async(req, res) => {
 	}
 })
 
-// endpoint to get the pastries left to win
+// return the array of the pastries left to win
 app.get("/pastries-left-to-win", async(req, res) => {
   try {
     let pastriesLeft = await Pastry.find({
