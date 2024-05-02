@@ -3,50 +3,102 @@ import styles from './../css/choosePastries.module.css';
 
 function ChoosePastries() {
 
-    const pastriesWon = localStorage.getItem('numberOfPastriesWon')
+    const numberOfPastriesWon = localStorage.getItem('numberOfPastriesWon')
     const winningDate = localStorage.getItem('winningDate')
 
-    let pastriesChoosed = []
-
-    const [pictures, setPictures] = useState([]);
+    const [warningMessage, setWarningMessage] = useState([]);
     const [pastries, setPastries] = useState([]);
+    const [pastriesChoosed, setPastriesChoosed] = useState([]);
+
     useEffect(() => {
+        localStorage.removeItem('numberOfPastriesChooseable');
+
+        if (!localStorage.hasOwnProperty('numberOfPastriesChooseable')) {
+            localStorage.setItem('numberOfPastriesChooseable', numberOfPastriesWon);
+        } else {
+            console.log('pastries chooseable ' + localStorage.getItem('numberOfPastriesChooseable'))
+        }
+
         fetch("http://localhost:3001/pastries-left-to-win")
         .then(res => res.json())
         .then(
             (result) => {
-                const imageUrls = result.map(pastry => pastry.image)
-                setPictures(imageUrls)
                 setPastries(result)
             }
         )
     }, []);
 
     function addSelectedPastry(item) {
+        let numberOfPastriesChooseable = localStorage.getItem('numberOfPastriesChooseable')
+
+        if (numberOfPastriesChooseable > 0) {
+            let pastriesChoosedContainer = document.querySelector('.pastries_choosed')
+            const pastry = document.createElement("img")
+            pastry.src = `/images/pastries/${item.image}`
+            pastry.alt = item.image
+    
+            // style
+            pastry.style.width = '15vw';
+            pastry.style.aspectRatio = '1';
+            pastry.style.margin = '5px';
+            pastry.style.borderRadius = '5px';
+    
+            // remove pastries where stock = 0 from the list
+            item.stock--
+            const updatedPastries = pastries.filter(p => p.stock > 0);
+            setPastries(updatedPastries);
+    
+            // add pastry choosed below
+            pastriesChoosedContainer.appendChild(pastry)
+            const updatedPastriesChoosed = [...pastriesChoosed, item];
+            setPastriesChoosed(updatedPastriesChoosed);
+            console.log(pastriesChoosed)
+
+            numberOfPastriesChooseable--
+            localStorage.setItem('numberOfPastriesChooseable', numberOfPastriesChooseable.toString())
+
+        } else {
+            setWarningMessage("You cannot choose more than " + numberOfPastriesWon)
+        }
+    }
+
+    function confirmSelection(pastriesChoosed) {
+        setWarningMessage("")
         let pastriesChoosedContainer = document.querySelector('.pastries_choosed')
-        const pastry = document.createElement("img")
-        pastry.src = `/images/pastries/${item.image}`
-        pastry.alt = item.image
-        pastry.classList.add('pastrie_choosed')
-        pastriesChoosedContainer.appendChild(pastry)
-        pastriesChoosed.push(item)
-        console.log(pastriesChoosed)
+        if (pastriesChoosedContainer.childElementCount < localStorage.getItem('numberOfPastriesWon') && pastries.lenght > 0) {
+            setWarningMessage("You can choose " + (localStorage.getItem('numberOfPastriesWon') - pastriesChoosedContainer.childElementCount) + " more")
+        } else {
+            fetch("http://localhost:3001/choose-pastries", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': localStorage.getItem('token'),
+                },
+                body: JSON.stringify({
+                    pastriesChoosed: pastriesChoosed,
+                    winningDate: winningDate,
+                    numberOfPastriesWon: numberOfPastriesWon,
+                }),
+            })
+        }
+        
     }
 
 
     return(
         <div>
-            {<p>Congratulations !!! You can choose {pastriesWon} pastries.</p>}
+            {<p>Congratulations !!! You can choose {numberOfPastriesWon} pastries.</p>}
             {pastries.length > 0 && (
-            <div className={styles.img_caroussel}>
+            <div className={styles.pastries_container}>
                 {pastries.map((item) => (
                     <img key={item} src={`/images/pastries/${item.image}`} alt={item.image} onClick={() => addSelectedPastry(item)} />
                 ))}
             </div>
             )}
+            <p className={styles.warning_message}>{warningMessage}</p>
             <p>Pastries you choosed : </p>
             <div className="pastries_choosed"></div>
-            <button>Choose</button>
+            <button onClick={() => confirmSelection(pastriesChoosed)}>Choose</button>
         </div>
     );
 }

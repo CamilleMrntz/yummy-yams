@@ -1,9 +1,10 @@
 import express from "express"
 import mongoose from "mongoose"
-import Pastry from "./models/pastries.mjs"
 import cors from "cors"
-import User from "./models/users.mjs"
 import jwt from "jsonwebtoken"
+import Pastry from "./models/pastries.mjs"
+import User from "./models/users.mjs"
+import Winner from "./models/winners.mjs"
 
 const app = express()
 const port = 3001
@@ -105,7 +106,6 @@ app.get("/pastries-img", async(req, res) => {
         res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des pâtisseries" })
     }
 })
-
 
 
 
@@ -229,13 +229,46 @@ app.get("/pastries-left-to-win", async(req, res) => {
     })
     res.json(pastriesLeft)
   } catch (err) {
-        console.error("Erreur :", err)
-        res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des pâtisseries" })
-    }
+      console.error("Erreur :", err)
+      res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des pâtisseries" })
+  }
 })
 
 // endpoint to post the pastries choosed (name of the pastry, date and hour of winning, number of pastries won)
+app.post("/choose-pastries", async(req, res) => {
+  const token = req.headers['x-access-token']
 
+  try {
+    const decoded = jwt.verify(token, 'secret123')
+    const email = decoded.email
+    const user = await User.findOne({ email: email })
 
+    if (user) {
+      const winner = await Winner.create({
+        userName: user.name,
+        date: req.body.winningDate,
+        numberOfPastriesWon: req.body.numberOfPastriesWon,
+        pastries: req.body.pastriesChoosed,
+      })
+
+      // update stock & quantityWon
+      let pastriesChoosed = req.body.pastriesChoosed
+      console.log(pastriesChoosed)
+      await Promise.all(pastriesChoosed.map(async (pastry) => {
+        // Find and update the pastry
+        await Pastry.findOneAndUpdate(
+          { name: pastry.name, stock: { $gt: 0 } },
+          { $inc: { quantityWon: 1, stock: -1 }},
+        )
+      }))
+    }
+    console.log(req.body)
+    res.json({ status: 'ok'})
+
+  } catch (err) {
+      console.error("Erreur :", err)
+		  return res.status(500).json({ status: 'error', error: 'Invalid token or user not found' })
+  }
+})
 
 app.listen(port, () => console.log(`App démarrée sur http://localhost:${port}`));

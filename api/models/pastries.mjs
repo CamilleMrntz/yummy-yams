@@ -12,5 +12,4 @@ const pastrySchema = new mongoose.Schema(
 
 const Pastry = mongoose.model('pastries', pastrySchema);
 
-//module.exports = Pastry;
 export default Pastry;
