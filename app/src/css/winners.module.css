@@ -1,8 +1,34 @@
 .main {
     display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.winner {
+h1 {
+
+}
+
+.winners {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.winner_card {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* .winner_card_only {
+    border: 2px solid grey;
+} */
+
+.winner_title {
+    font-weight: bold;
+}
+
+.winner_card p {
+    text-align: center;
 }
