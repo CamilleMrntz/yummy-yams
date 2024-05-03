@@ -64,7 +64,7 @@ app.post('/login', async (req, res) => {
 })
 
 
-
+// PASTRIES
 // Return the json
 app.get("/pastries", async (req, res) => {
     try {
@@ -110,7 +110,7 @@ app.get("/pastries-img", async(req, res) => {
 
 
 
-// Dice Game
+// DICE GAME
 function getRandomNumber() {
   return Math.floor(Math.random() * 6) + 1;
 }
@@ -268,6 +268,18 @@ app.post("/choose-pastries", async(req, res) => {
   } catch (err) {
       console.error("Erreur :", err)
 		  return res.status(500).json({ status: 'error', error: 'Invalid token or user not found' })
+  }
+})
+
+
+// WINNERS
+app.get("/winners", async (req, res) => {
+  try {
+    const winners = await Winner.find()
+    res.json(winners)
+  } catch (err) {
+      console.error("Erreur :", err)
+      res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des winners" })
   }
 })
 
