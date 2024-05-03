@@ -13,7 +13,7 @@ code {
 }
 
 h1 {
-  color: black;
+  color: rgb(255, 255, 255);
 }
 
 button {
@@ -25,4 +25,12 @@ button {
   color: rgb(255, 255, 255);
   cursor: pointer;
   font-size: 1.1rem;
+}
+
+button:hover {
+  background-color: rgb(238, 134, 49);
+}
+
+button:active {
+  background-color: rgb(238, 123, 29);
 }

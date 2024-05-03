@@ -8,11 +8,17 @@ function Header() {
         window.location.href = '/'
     }
 
+    function deconnexion() {
+        localStorage.removeItem('token')
+        window.location.href = '/'
+    }
+
     return(
         <div className={styles.main}>
-            <button onClick={home}>            
+            <button className={styles.home}  onClick={home}>            
                 <img src="/images/croissants.webp" alt="croissant" />
             </button>
+            <button className={styles.deconnexion} onClick={deconnexion}>Deconnexion</button>
         </div>
     );
 }

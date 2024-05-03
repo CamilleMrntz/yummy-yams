@@ -34,8 +34,8 @@ function Login() {
 
   return (
     <div className={styles.main}>
-      <h1>Login</h1>
-      <form onSubmit={loginUser}>
+      <form>
+        <h1 className={styles.title}>Login</h1>
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -50,7 +50,7 @@ function Login() {
           placeholder="Password"
         />
         <br />
-        <input type="submit" value="Login" />
+        <button onClick={loginUser}>Se connecter</button>
       </form>
     </div>
   );

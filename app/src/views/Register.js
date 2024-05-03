@@ -33,8 +33,8 @@ function Register() {
 
   return (
     <div className={styles.main}>
-      <h1>Registrer</h1>
-      <form onSubmit={registerUser}>
+      <form>
+        <h1 className={styles.title}>Registrer</h1>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -56,7 +56,7 @@ function Register() {
           placeholder="Password"
         />
         <br />
-        <input type="submit" value="Register" />
+        <button onClick={registerUser}>Créer un compte</button>
       </form>
     </div>
   );

@@ -4,10 +4,6 @@
     align-items: center;
 }
 
-h1 {
-
-}
-
 .winners {
     display: flex;
     flex-direction: column;
