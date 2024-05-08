@@ -2,6 +2,8 @@ import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
 import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
+
 import Pastry from "./models/pastries.mjs"
 import User from "./models/users.mjs"
 import Winner from "./models/winners.mjs"
@@ -24,15 +26,29 @@ mongoose.connect('mongodb://localhost:27017/yams_db', {  // mongo:27017 pour lan
   console.error('Erreur de connexion à MongoDB :', error)
 })
 
+async function encryptPassword(password) {
+  try {
+      const saltRounds = 10; // Nombre de "salts" à utiliser, 10 est une valeur standard
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      return hashedPassword;
+  } catch (error) {
+      console.error('Erreur lors du cryptage du mot de passe:', error);
+      throw error;
+  }
+}
+
 
 // REGISTRATION
 app.post('/registration', async (req, res) => {
   console.log(req.body)
+
   try {
+    const hashedPassword = await encryptPassword(req.body.password);
+
     const user = await User.create({
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password,
+      password: hashedPassword,
       chancesLeft: 3,
     })
     res.json({ status: 'ok'})
@@ -44,24 +60,41 @@ app.post('/registration', async (req, res) => {
 
 // LOGIN
 app.post('/login', async (req, res) => {
-  const user = await User.findOne({
-    email: req.body.email,
-    password: req.body.password,
-  })
-  if (user) {
-    const token = jwt.sign({
-      name: user.name,
-      email: user.email,
-    }, 'secret123') // TODO : replace secret123 by an environment variable .env
+  try {
+    // Trouver l'utilisateur dans la base de données en utilisant l'adresse e-mail
+    const user = await User.findOne({ email: req.body.email });
 
-    console.log(token)
-    return res.json({ status: 'ok', user: token })
-  } else {
-    return res.json({ status: 'error', user: false })
+    // Si l'utilisateur n'existe pas dans la base de données
+    if (!user) {
+      return res.json({ status: 'error', user: false, message: 'user does not exist' });
+    }
+
+    // Vérifier le mot de passe
+    const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+
+    // Si les mots de passe correspondent
+    if (passwordMatch) {
+      // Générer le token JWT
+      const token = jwt.sign(
+        {
+          name: user.name,
+          email: user.email,
+        },
+        'secret123' // Remplacer secret123 par une variable d'environnement
+      );
+
+      console.log(token);
+      return res.json({ status: 'ok', user: token });
+    } else {
+      // Si les mots de passe ne correspondent pas
+      return res.json({ status: 'error', user: false, message: 'passwords are not matching' });
+    }
+  } catch (error) {
+    console.error('Erreur lors de la connexion:', error);
+    return res.json({ status: 'error', error: error });
   }
-  
-  
-})
+});
+
 
 
 // PASTRIES
