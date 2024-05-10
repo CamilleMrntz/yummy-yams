@@ -8,6 +8,12 @@ h1 {
 	margin: 30px;
 }
 
+.message {
+	width: 40vw;
+	margin: auto;
+	padding-bottom: 30px;
+}
+
 .play_button {
 	padding: 0.75rem 1.5rem;
 	border-radius: 0.3rem;

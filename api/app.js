@@ -3,6 +3,7 @@ import mongoose from "mongoose"
 import cors from "cors"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
+import dotenv from "dotenv"
 
 import Pastry from "./models/pastries.mjs"
 import User from "./models/users.mjs"
@@ -13,6 +14,9 @@ const port = 3001
 
 app.use(cors())
 app.use(express.json())
+
+dotenv.config();
+const SECRET = process.env.JWT_SECRET
 
 
 mongoose.connect('mongodb://localhost:27017/yams_db', {  // mongo:27017 pour lancer avec docker  // localhost:27017 pour lancer en local
@@ -61,32 +65,26 @@ app.post('/registration', async (req, res) => {
 // LOGIN
 app.post('/login', async (req, res) => {
   try {
-    // Trouver l'utilisateur dans la base de données en utilisant l'adresse e-mail
     const user = await User.findOne({ email: req.body.email });
 
-    // Si l'utilisateur n'existe pas dans la base de données
     if (!user) {
       return res.json({ status: 'error', user: false, message: 'user does not exist' });
     }
 
-    // Vérifier le mot de passe
     const passwordMatch = await bcrypt.compare(req.body.password, user.password);
 
-    // Si les mots de passe correspondent
     if (passwordMatch) {
-      // Générer le token JWT
       const token = jwt.sign(
         {
           name: user.name,
           email: user.email,
         },
-        'secret123' // Remplacer secret123 par une variable d'environnement
+        SECRET
       );
 
       console.log(token);
       return res.json({ status: 'ok', user: token });
     } else {
-      // Si les mots de passe ne correspondent pas
       return res.json({ status: 'error', user: false, message: 'passwords are not matching' });
     }
   } catch (error) {

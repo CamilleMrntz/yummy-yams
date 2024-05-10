@@ -72,7 +72,10 @@ function ChoosePastries() {
     function confirmSelection(pastriesChoosed) {
         setWarningMessage("")
         let pastriesChoosedContainer = document.querySelector('.pastries_choosed')
-        if (pastriesChoosedContainer.childElementCount < localStorage.getItem('numberOfPastriesWon') && pastries.lenght > 0) {
+        let pastriesContainer = document.querySelector('pastries_container')
+        console.log(pastriesChoosedContainer.childElementCount)
+        console.log(localStorage.getItem('numberOfPastriesWon'))
+        if (pastriesChoosedContainer.childElementCount < localStorage.getItem('numberOfPastriesWon') && pastries.length > 0) {
             setWarningMessage("You can choose " + (localStorage.getItem('numberOfPastriesWon') - pastriesChoosedContainer.childElementCount) + " more")
         } else {
             fetch("http://localhost:3001/choose-pastries", {
@@ -87,7 +90,6 @@ function ChoosePastries() {
                     numberOfPastriesWon: pastriesChoosedContainer.childElementCount,
                 }),
             })
-
             navigate('/')
         }
         
@@ -96,7 +98,8 @@ function ChoosePastries() {
 
     return(
         <div className={styles.main}>
-            {<p>Congratulations !!! You can choose {numberOfPastriesWon} pastries.</p>}
+
+            {<p>Bravo !!! Tu peux choisir {numberOfPastriesWon} pâtisseries.</p>}
             {pastries.length > 0 && (
             <div className={styles.pastries_container}>
                 {pastries.map((item) => (
@@ -105,9 +108,9 @@ function ChoosePastries() {
             </div>
             )}
             <p className={styles.warning_message}>{warningMessage}</p>
-            <p>Pastries you choosed : </p>
+            <p>pâtisseries choisis : </p>
             <div className="pastries_choosed"></div>
-            <button onClick={() => confirmSelection(pastriesChoosed)}>Choose</button>
+            <button onClick={() => confirmSelection(pastriesChoosed)}>Choisir</button>
         </div>
     );
 }

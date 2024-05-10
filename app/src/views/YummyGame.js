@@ -1,37 +1,48 @@
 import React, { useState, useRef, useEffect, useLayoutEffect } from "react"
 import gsap from "gsap"
 import { useNavigate } from "react-router-dom"
-import { useJwt, decodeToken, isExpired } from "react-jwt"
+import { decodeToken, isExpired } from "react-jwt"
 import styles from './../css/yummyGame.module.css';
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { addUser } from '../redux/features/User';
 
 const YummyGame = () => {
+    // Store
+    const userInfo = useSelector((state) => state.user.value)
+    const dispatch = useDispatch()
+
     const navigate = useNavigate()
 
     const token = localStorage.getItem('token')
     console.log("token : " + token)
 
+    const [userName, setUserName] = useState('')
     const [dices, setDices] = useState([0,0,0,0,0])
     const [message, setMessage] = useState('');
-    const [chancesLeft, setChancesLeft] = useState(0);
 
 
     useEffect(() => {
-        if (token) {
-            let isTokenExpired = isExpired(token)
-            console.log("Token expired : " + isTokenExpired)
-            let user = decodeToken(token)
-            console.log("user name : " + user.name)
-            if (!user) {
-                localStorage.removeItem('token')
-                console.log("Token removed")
+        const fetchData = async () => {
+            if (token) {
+                let isTokenExpired = isExpired(token)
+                console.log("Token expired : " + isTokenExpired)
+                let user = await decodeToken(token)
+                console.log("user name : " + user.name)
+                if (!user) {
+                    localStorage.removeItem('token')
+                    console.log("Token removed")
+                } else {
+                    setUserName(user.name)
+                    fetchChancesLeft(user.email);
+                }
             } else {
-                fetchChancesLeft(user.email);
+                let data = localStorage.getItem('data')
+                console.log("data : " + data) 
+                console.log("token : " + token) 
             }
-        } else {
-            let data = localStorage.getItem('data')
-            console.log("data : " + data) 
-            console.log("token : " + token) 
         }
+        fetchData()
     }, [])
 
     async function fetchChancesLeft(email) {
@@ -44,8 +55,7 @@ const YummyGame = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log("Chances left:", data);
-                setChancesLeft(data);
-                setMessage(data <= 0 ? 'You rolled the dices 3 times.' : `You have ${data} chances left.`);
+                setMessage(data <= 0 ? 'You rolled the dices 3 times.' : `Bienvenue dans le jeu ${userName}. Tu peux lancer les dés encore ${data} fois pour tenter de remporter des pâtisseries.`);
             } else {
                 console.error("Failed to fetch chances left:", response.statusText);
             }
@@ -102,10 +112,12 @@ const YummyGame = () => {
                 console.log("pastries won : " + data.numberOfPastriesWon)
                 localStorage.setItem('numberOfPastriesWon', data.numberOfPastriesWon)
                 localStorage.setItem('winningDate', new Date())
-                navigate('/choose-pastries')
+                gsap.to(".yourComponent", { duration: 5, opacity: 0, onComplete: () => {
+                    navigate('/choose-pastries');
+                }});
             }
             setDices(data.dices)
-            setMessage(data.chancesLeft === 0 ? 'You rolled the dices 3 times.' : 'You can roll ' + data.chancesLeft + ' more time.');
+            setMessage(data.chancesLeft === 0 ? 'You rolled the dices 3 times.' : 'Bienvenue dans le jeu ' + userName + '. Tu peux lancer les dés encore ' + data.chancesLeft + ' fois.');
         } else {
             const errorResponse = await response.json()
             console.error(errorResponse)
@@ -113,27 +125,32 @@ const YummyGame = () => {
     }
 
 
-    // function informPlayer(data) {
-    //     console.log("dices : " + data.dices)
-    //     if (data.dices.includes(0)) {
-    //         return <p>You rolled the dices 3 times.</p>
-    //     } else {
-    //         return <p>You have .. more chances</p>
-    //     }
-    // }
-
 
     return (
         <div className={styles.main}>
             <h1>Roll the dices</h1>
-            {/* {user && (
-                <p>Welcome, {user}!</p>
-            )} */}
-            {message && <p>{message}</p>}
+            {userName && message && <p className={styles.message}>{message}</p>}
             {dices.map((dice, index) => <Dice key={gsap.utils.random()} value={dice} />)}
 		
             <div className={styles.actions}>
                 <button className={styles.play_button} onClick={rollDices}>PLAY</button>
+            </div>
+            <div>
+                <h1>Store</h1>
+                <div>
+                    {userInfo.map((user) => {
+                        return (
+                            <div>
+                                <p> {user.email}</p>
+                                <p> {user.token}</p>
+                            </div>
+                        )})}
+                </div>
+                <p>{userInfo.email}</p>
+                <p>{userInfo.token}</p>
+                <button onClick={() => {
+                    dispatch(addUser({ email: "blabla", token: "blibli" }))
+                }}>userInfo</button>
             </div>
         </div>
     )

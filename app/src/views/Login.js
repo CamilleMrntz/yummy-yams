@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import styles from './../css/connexion.module.css';
+import { useDispatch } from "react-redux";
+import { addUser } from '../redux/features/User';
 
 function Login() {
+  // Store
+  const dispatch = useDispatch()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,6 +28,8 @@ function Login() {
 
     if (data.user) {
       localStorage.setItem('token', data.user)
+      ///////////
+      dispatch(addUser({email: email, token: data.user}))
       alert('Login successful')
       window.location.href = '/yummy-game'
     } else {

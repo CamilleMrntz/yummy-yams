@@ -27,6 +27,8 @@ function Register() {
     const data = await response.json()
     if (data.status === 'ok') {
       navigate('/login')
+    } else {
+      alert('Email déjà enregistré')
     }
     console.log(data)
   }
