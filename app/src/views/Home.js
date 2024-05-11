@@ -83,7 +83,7 @@ function Home() {
                         
                     )}
                     <div className={styles.winners}>
-                        <p>See the winners : </p>
+                        <p>Voir les gagnants : </p>
                         <button onClick={seeWinners}>⭐</button>
                     </div>
                     {pictures.length > 0 && (

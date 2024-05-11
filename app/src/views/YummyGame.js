@@ -5,7 +5,7 @@ import { decodeToken, isExpired } from "react-jwt"
 import styles from './../css/yummyGame.module.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
-import { addUser } from '../redux/features/User';
+import { updateUser } from '../redux/features/User';
 
 const YummyGame = () => {
     // Store
@@ -19,7 +19,8 @@ const YummyGame = () => {
 
     const [userName, setUserName] = useState('')
     const [dices, setDices] = useState([0,0,0,0,0])
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState('')
+    const [playButtonVisible, setPlayButtonVisible] = useState(true)
 
 
     useEffect(() => {
@@ -28,7 +29,7 @@ const YummyGame = () => {
                 let isTokenExpired = isExpired(token)
                 console.log("Token expired : " + isTokenExpired)
                 let user = await decodeToken(token)
-                console.log("user name : " + user.name)
+                console.log("user name : " + userInfo.username)
                 if (!user) {
                     localStorage.removeItem('token')
                     console.log("Token removed")
@@ -55,7 +56,7 @@ const YummyGame = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log("Chances left:", data);
-                setMessage(data <= 0 ? 'You rolled the dices 3 times.' : `Bienvenue dans le jeu ${userName}. Tu peux lancer les dés encore ${data} fois pour tenter de remporter des pâtisseries.`);
+                setMessage(data <= 0 ? 'Tu as déjà lancé les dés 3 fois.' : `Bienvenue dans le jeu ${userInfo.username}. Tu peux lancer les dés encore ${data} fois pour tenter de remporter des pâtisseries.`);
             } else {
                 console.error("Failed to fetch chances left:", response.statusText);
             }
@@ -110,14 +111,23 @@ const YummyGame = () => {
             }
             if (data.numberOfPastriesWon !== 0) {
                 console.log("pastries won : " + data.numberOfPastriesWon)
+                // STORE use in choosePastries
+                dispatch(updateUser({ field: 'numberOfPastriesWon', value: data.numberOfPastriesWon }));
+                dispatch(updateUser({ field: 'winningDate', value: new Date() }));
+                // To remove
                 localStorage.setItem('numberOfPastriesWon', data.numberOfPastriesWon)
                 localStorage.setItem('winningDate', new Date())
+                ////////////////
+                // play_button
+                setMessage('BRAVOOOO !!!')
+                setPlayButtonVisible(false);
                 gsap.to(".yourComponent", { duration: 5, opacity: 0, onComplete: () => {
                     navigate('/choose-pastries');
                 }});
+            } else {
+                setMessage(data.chancesLeft === 0 ? 'Tu as déjà lancé les dés 3 fois.' : 'Bienvenue dans le jeu ' + userInfo.username + '. Tu peux lancer les dés encore ' + data.chancesLeft + ' fois.')
             }
             setDices(data.dices)
-            setMessage(data.chancesLeft === 0 ? 'You rolled the dices 3 times.' : 'Bienvenue dans le jeu ' + userName + '. Tu peux lancer les dés encore ' + data.chancesLeft + ' fois.');
         } else {
             const errorResponse = await response.json()
             console.error(errorResponse)
@@ -129,28 +139,12 @@ const YummyGame = () => {
     return (
         <div className={styles.main}>
             <h1>Roll the dices</h1>
+            <p></p>
             {userName && message && <p className={styles.message}>{message}</p>}
             {dices.map((dice, index) => <Dice key={gsap.utils.random()} value={dice} />)}
 		
             <div className={styles.actions}>
-                <button className={styles.play_button} onClick={rollDices}>PLAY</button>
-            </div>
-            <div>
-                <h1>Store</h1>
-                <div>
-                    {userInfo.map((user) => {
-                        return (
-                            <div>
-                                <p> {user.email}</p>
-                                <p> {user.token}</p>
-                            </div>
-                        )})}
-                </div>
-                <p>{userInfo.email}</p>
-                <p>{userInfo.token}</p>
-                <button onClick={() => {
-                    dispatch(addUser({ email: "blabla", token: "blibli" }))
-                }}>userInfo</button>
+                {playButtonVisible && <button className={styles.play_button} onClick={rollDices}>PLAY</button>}
             </div>
         </div>
     )

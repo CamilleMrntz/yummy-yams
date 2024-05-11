@@ -1,13 +1,18 @@
 import React , { useState, useEffect }from "react";
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { updateUser } from '../redux/features/User';
 import styles from './../css/choosePastries.module.css';
 
 function ChoosePastries() {
+    const userInfo = useSelector((state) => state.user.value)
+    const dispatch = useDispatch()
 
     const navigate = useNavigate()
 
-    const numberOfPastriesWon = localStorage.getItem('numberOfPastriesWon')
-    const winningDate = localStorage.getItem('winningDate')
+    const numberOfPastriesWon = userInfo.numberOfPastriesWon
+    const winningDate = userInfo.winningDate
 
     const [warningMessage, setWarningMessage] = useState([]);
     const [pastries, setPastries] = useState([]);
@@ -17,7 +22,7 @@ function ChoosePastries() {
         localStorage.removeItem('numberOfPastriesChooseable');
 
         if (!localStorage.hasOwnProperty('numberOfPastriesChooseable')) {
-            localStorage.setItem('numberOfPastriesChooseable', numberOfPastriesWon);
+            localStorage.setItem('numberOfPastriesChooseable', userInfo.numberOfPastriesWon);
         } else {
             console.log('pastries chooseable ' + localStorage.getItem('numberOfPastriesChooseable'))
         }
@@ -99,7 +104,7 @@ function ChoosePastries() {
     return(
         <div className={styles.main}>
 
-            {<p>Bravo !!! Tu peux choisir {numberOfPastriesWon} pâtisseries.</p>}
+            {<p>Bravo !!! Tu peux choisir {userInfo.numberOfPastriesWon} pâtisseries.</p>}
             {pastries.length > 0 && (
             <div className={styles.pastries_container}>
                 {pastries.map((item) => (

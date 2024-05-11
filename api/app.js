@@ -83,7 +83,7 @@ app.post('/login', async (req, res) => {
       );
 
       console.log(token);
-      return res.json({ status: 'ok', user: token });
+      return res.json({ status: 'ok', user: token, username: user.name });
     } else {
       return res.json({ status: 'error', user: false, message: 'passwords are not matching' });
     }
@@ -222,7 +222,7 @@ app.post("/rolling-dices", async(req, res) => {
   const token = req.headers['x-access-token']
 
   try {
-    const decoded = jwt.verify(token, 'secret123')
+    const decoded = jwt.verify(token, SECRET)
     const email = decoded.email
 
     const user = await User.findOne({ email: email })
@@ -270,7 +270,7 @@ app.post("/choose-pastries", async(req, res) => {
   const token = req.headers['x-access-token']
 
   try {
-    const decoded = jwt.verify(token, 'secret123')
+    const decoded = jwt.verify(token, SECRET)
     const email = decoded.email
     const user = await User.findOne({ email: email })
 
