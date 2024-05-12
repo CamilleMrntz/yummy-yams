@@ -16,13 +16,10 @@ app.use(cors())
 app.use(express.json())
 
 dotenv.config();
-const SECRET = process.env.JWT_SECRET
+const SECRET: string = process.env.JWT_SECRET || '';
 
 
-mongoose.connect('mongodb://localhost:27017/yams_db', {  // mongo:27017 pour lancer avec docker  // localhost:27017 pour lancer en local
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose.connect('mongodb://localhost:27017/yams_db', {})  // mongo:27017 pour lancer avec docker  // localhost:27017 pour lancer en local
 .then(() => {
   console.log('Connexion à MongoDB réussie')
 })
@@ -31,9 +28,9 @@ mongoose.connect('mongodb://localhost:27017/yams_db', {  // mongo:27017 pour lan
 })
 
 
-async function encryptPassword(password) {
+async function encryptPassword(password: string) {
   try {
-      const hashedPassword = await argon2.hash(password);
+      const hashedPassword: string = await argon2.hash(password);
       return hashedPassword;
   } catch (err) {
       console.error('Erreur lors du hachage du mot de passe:', err);
@@ -47,7 +44,7 @@ app.post('/registration', async (req, res) => {
   console.log(req.body)
 
   try {
-    const hashedPassword = await encryptPassword(req.body.password);
+    const hashedPassword: string = await encryptPassword(req.body.password);
 
     const user = await User.create({
       name: req.body.name,
@@ -111,11 +108,11 @@ app.get("/pastries", async (req, res) => {
 app.get("/pastries-left", async (req, res) => {
     try {
         const pastries = await Pastry.find()
-        let pastriesLeft = 0
+        let pastriesLeft: number = 0
         pastries.forEach(pastry => {
             pastriesLeft += pastry.stock
         });
-        console.log(pastriesLeft)
+        console.log("pastries left : " + pastriesLeft)
         res.json(pastriesLeft.toString())
     } catch (err) {
         console.error("Erreur :", err)
@@ -146,7 +143,7 @@ function getRandomNumber() {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-function isThereTwoPairs(dices) {
+function isThereTwoPairs(dices: Array<number>) {
   const occurrences = {};
   for (const dice of dices) {
       occurrences[dice] = (occurrences[dice] || 0) + 1;
@@ -163,12 +160,12 @@ function isThereTwoPairs(dices) {
   return pairCount === 2;
 }
 
-function isThereFourIndenticalNumbers(dices) {
+function isThereFourIndenticalNumbers(dices: Array<number>) {
   const identicalCount = dices.filter(dice => dice === dices[0]).length;
   return identicalCount === 4
 }
 
-function isThereFiveIndenticalNumbers(dices) {
+function isThereFiveIndenticalNumbers(dices: Array<number>) {
   const allEqual = dices.every((dice, index) => dice === dices[0]);
   return allEqual
 }
