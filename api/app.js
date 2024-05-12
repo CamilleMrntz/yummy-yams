@@ -2,7 +2,7 @@ import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
 import jwt from "jsonwebtoken"
-import bcrypt from "bcrypt"
+import argon2 from "argon2"
 import dotenv from "dotenv"
 
 import Pastry from "./models/pastries.mjs"
@@ -30,14 +30,14 @@ mongoose.connect('mongodb://localhost:27017/yams_db', {  // mongo:27017 pour lan
   console.error('Erreur de connexion à MongoDB :', error)
 })
 
+
 async function encryptPassword(password) {
   try {
-      const saltRounds = 10; // Nombre de "salts" à utiliser, 10 est une valeur standard
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
+      const hashedPassword = await argon2.hash(password);
       return hashedPassword;
-  } catch (error) {
-      console.error('Erreur lors du cryptage du mot de passe:', error);
-      throw error;
+  } catch (err) {
+      console.error('Erreur lors du hachage du mot de passe:', err);
+      throw err;
   }
 }
 
@@ -71,7 +71,7 @@ app.post('/login', async (req, res) => {
       return res.json({ status: 'error', user: false, message: 'user does not exist' });
     }
 
-    const passwordMatch = await bcrypt.compare(req.body.password, user.password);
+    const passwordMatch = await argon2.verify(req.body.password, user.password);
 
     if (passwordMatch) {
       const token = jwt.sign(
