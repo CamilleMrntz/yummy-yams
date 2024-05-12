@@ -3,9 +3,8 @@ import gsap from "gsap"
 import { useNavigate } from "react-router-dom"
 import { decodeToken, isExpired } from "react-jwt"
 import styles from './../css/yummyGame.module.css';
-import { useSelector } from 'react-redux';
-import { useDispatch } from "react-redux";
-import { updateUser } from '../redux/features/User';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateUser, deleteUser } from '../redux/features/User';
 
 const YummyGame = () => {
     // Store
@@ -14,8 +13,15 @@ const YummyGame = () => {
 
     const navigate = useNavigate()
 
-    const token = localStorage.getItem('token')
-    console.log("token : " + token)
+    let token = ''
+
+    if (userInfo != null) {
+        token = userInfo.token
+        //console.log("token : " + token)
+    } else {
+        token = null
+        window.location.href = '/'
+    }
 
     const [userName, setUserName] = useState('')
     const [dices, setDices] = useState([0,0,0,0,0])
@@ -25,27 +31,22 @@ const YummyGame = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (token) {
-                let isTokenExpired = isExpired(token)
-                console.log("Token expired : " + isTokenExpired)
-                let user = await decodeToken(token)
-                console.log("user name : " + userInfo.username)
-                if (!user) {
-                    localStorage.removeItem('token')
-                    console.log("Token removed")
-                } else {
-                    setUserName(user.name)
-                    fetchChancesLeft(user.email);
-                }
+            let isTokenExpired = isExpired(token)
+            console.log("Token expired : " + isTokenExpired)
+            let user = await decodeToken(token)
+            console.log("user name : " + user.name)
+            if (!user) {
+                dispatch(deleteUser())
+                console.log("No more user in the storage")
             } else {
-                let data = localStorage.getItem('data')
-                console.log("data : " + data) 
-                console.log("token : " + token) 
+                setUserName(user.name)
+                fetchChancesLeft(user.email);
             }
         }
         fetchData()
     }, [])
 
+    // Put chancesLeft in the sotre and remove this function ?
     async function fetchChancesLeft(email) {
         try {
             const response = await fetch(`http://localhost:3001/chances-left/${email}`, {
@@ -55,6 +56,7 @@ const YummyGame = () => {
             });
             if (response.ok) {
                 const data = await response.json();
+                dispatch(updateUser({ field: 'chancesLeft', value: data }));
                 console.log("Chances left:", data);
                 setMessage(data <= 0 ? 'Tu as déjà lancé les dés 3 fois.' : `Bienvenue dans le jeu ${userInfo.username}. Tu peux lancer les dés encore ${data} fois pour tenter de remporter des pâtisseries.`);
             } else {
@@ -112,11 +114,11 @@ const YummyGame = () => {
             if (data.numberOfPastriesWon !== 0) {
                 console.log("pastries won : " + data.numberOfPastriesWon)
                 // STORE use in choosePastries
-                dispatch(updateUser({ field: 'numberOfPastriesWon', value: data.numberOfPastriesWon }));
-                dispatch(updateUser({ field: 'winningDate', value: new Date() }));
+                dispatch(updateUser({ field: 'numberOfPastriesWon', value: data.numberOfPastriesWon }))
+                dispatch(updateUser({ field: 'winningDate', value: new Date() }))
                 // To remove
-                localStorage.setItem('numberOfPastriesWon', data.numberOfPastriesWon)
-                localStorage.setItem('winningDate', new Date())
+                //localStorage.setItem('numberOfPastriesWon', data.numberOfPastriesWon)
+                //localStorage.setItem('winningDate', new Date())
                 ////////////////
                 // play_button
                 setMessage('BRAVOOOO !!!')

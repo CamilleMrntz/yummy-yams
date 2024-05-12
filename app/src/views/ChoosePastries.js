@@ -1,7 +1,6 @@
 import React , { useState, useEffect }from "react";
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from 'react-redux';
 import { updateUser } from '../redux/features/User';
 import styles from './../css/choosePastries.module.css';
 
@@ -12,20 +11,14 @@ function ChoosePastries() {
     const navigate = useNavigate()
 
     const numberOfPastriesWon = userInfo.numberOfPastriesWon
-    const winningDate = userInfo.winningDate
 
     const [warningMessage, setWarningMessage] = useState([]);
     const [pastries, setPastries] = useState([]);
     const [pastriesChoosed, setPastriesChoosed] = useState([]);
 
     useEffect(() => {
-        localStorage.removeItem('numberOfPastriesChooseable');
 
-        if (!localStorage.hasOwnProperty('numberOfPastriesChooseable')) {
-            localStorage.setItem('numberOfPastriesChooseable', userInfo.numberOfPastriesWon);
-        } else {
-            console.log('pastries chooseable ' + localStorage.getItem('numberOfPastriesChooseable'))
-        }
+        dispatch(updateUser({ field: 'numberOfPastriesChooseable', value: userInfo.numberOfPastriesWon }))
 
         fetch("http://localhost:3001/pastries-left-to-win")
         .then(res => res.json())
@@ -33,15 +26,17 @@ function ChoosePastries() {
             (stock) => {
                 // si le nombre de patisseries en stock est inferieur au nombre de patisseries gagnées
                 if (stock.length < numberOfPastriesWon) {
-                    localStorage.setItem('numberOfPastriesWon', stock.length)
+                    dispatch(updateUser({ field: 'numberOfPastriesWon', value: stock.length }));
+                    //localStorage.setItem('numberOfPastriesWon', stock.length)
                 }
                 setPastries(stock)
             }
         )
     }, []);
 
+    // A CLICK ON A PASTRY ADDS IT BELOW
     function addSelectedPastry(item) {
-        let numberOfPastriesChooseable = localStorage.getItem('numberOfPastriesChooseable')
+        let numberOfPastriesChooseable = userInfo.numberOfPastriesChooseable
 
         if (numberOfPastriesChooseable > 0) {
             let pastriesChoosedContainer = document.querySelector('.pastries_choosed')
@@ -67,21 +62,20 @@ function ChoosePastries() {
             console.log(pastriesChoosed)
 
             numberOfPastriesChooseable--
-            localStorage.setItem('numberOfPastriesChooseable', numberOfPastriesChooseable.toString())
+            dispatch(updateUser({ field: 'numberOfPastriesChooseable', value: numberOfPastriesChooseable }))
+            //localStorage.setItem('numberOfPastriesChooseable', numberOfPastriesChooseable.toString())
 
         } else {
-            setWarningMessage("You cannot choose more than " + numberOfPastriesWon)
+            setWarningMessage("Tu ne peux pas choisir plus que " + numberOfPastriesWon)
         }
     }
 
+    // POST THE SELECTION TO THE BACKEND
     function confirmSelection(pastriesChoosed) {
         setWarningMessage("")
         let pastriesChoosedContainer = document.querySelector('.pastries_choosed')
-        let pastriesContainer = document.querySelector('pastries_container')
-        console.log(pastriesChoosedContainer.childElementCount)
-        console.log(localStorage.getItem('numberOfPastriesWon'))
-        if (pastriesChoosedContainer.childElementCount < localStorage.getItem('numberOfPastriesWon') && pastries.length > 0) {
-            setWarningMessage("You can choose " + (localStorage.getItem('numberOfPastriesWon') - pastriesChoosedContainer.childElementCount) + " more")
+        if (pastriesChoosedContainer.childElementCount < userInfo.numberOfPastriesWon && pastries.length > 0) {
+            setWarningMessage("tu peux encore en choisir " + (userInfo.numberOfPastriesWon - pastriesChoosedContainer.childElementCount))
         } else {
             fetch("http://localhost:3001/choose-pastries", {
                 method: 'POST',
@@ -91,10 +85,11 @@ function ChoosePastries() {
                 },
                 body: JSON.stringify({
                     pastriesChoosed: pastriesChoosed,
-                    winningDate: winningDate,
+                    winningDate: userInfo.winningDate,
                     numberOfPastriesWon: pastriesChoosedContainer.childElementCount,
                 }),
             })
+            dispatch(updateUser({ field: 'numberOfPastriesChooseable', value: 0 }))
             navigate('/')
         }
         

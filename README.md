@@ -15,8 +15,9 @@ animation for when the player wins
 facilitate the winning
 maybe add a numberOfPastriesWon in user and if chancesLeft = 1 && pastriesWon == 0
 
-fix stuuf on choosePastries
-(when player clicks on choisir and he choosed 0 pastries)
 
 // Register
 Email deja utilisé, se connecter (BOUTON)
+
+// TOKEN
+Gérer l'expiration du token (isExpired dans yummy-game)
