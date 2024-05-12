@@ -10,8 +10,6 @@ function ChoosePastries() {
 
     const navigate = useNavigate()
 
-    const numberOfPastriesWon = userInfo.numberOfPastriesWon
-
     const [warningMessage, setWarningMessage] = useState([]);
     const [pastries, setPastries] = useState([]);
     const [pastriesChoosed, setPastriesChoosed] = useState([]);
@@ -25,9 +23,8 @@ function ChoosePastries() {
         .then(
             (stock) => {
                 // si le nombre de patisseries en stock est inferieur au nombre de patisseries gagnées
-                if (stock.length < numberOfPastriesWon) {
+                if (stock.length < userInfo.numberOfPastriesWon) {
                     dispatch(updateUser({ field: 'numberOfPastriesWon', value: stock.length }));
-                    //localStorage.setItem('numberOfPastriesWon', stock.length)
                 }
                 setPastries(stock)
             }
@@ -63,10 +60,9 @@ function ChoosePastries() {
 
             numberOfPastriesChooseable--
             dispatch(updateUser({ field: 'numberOfPastriesChooseable', value: numberOfPastriesChooseable }))
-            //localStorage.setItem('numberOfPastriesChooseable', numberOfPastriesChooseable.toString())
 
         } else {
-            setWarningMessage("Tu ne peux pas choisir plus que " + numberOfPastriesWon)
+            setWarningMessage("Tu ne peux pas choisir plus que " + userInfo.numberOfPastriesWon)
         }
     }
 
@@ -90,6 +86,7 @@ function ChoosePastries() {
                 }),
             })
             dispatch(updateUser({ field: 'numberOfPastriesChooseable', value: 0 }))
+            alert('Choix validé !')
             navigate('/')
         }
         

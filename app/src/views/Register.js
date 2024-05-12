@@ -59,6 +59,7 @@ function Register() {
         />
         <br />
         <button onClick={registerUser}>Créer un compte</button>
+        <a href="/login">Clique ici si tu as déjà un compte</a>
       </form>
     </div>
   );

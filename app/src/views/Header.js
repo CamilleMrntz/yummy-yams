@@ -1,10 +1,10 @@
 import React from "react";
 import styles from './../css/header.module.css';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteUser } from "./../redux/features/User"
 
 function Header() {
-
+    const userInfo = useSelector((state) => state.user.value)
     const dispatch = useDispatch();
 
     function home() {
@@ -18,16 +18,14 @@ function Header() {
         window.location.href = '/'
     }
 
-    function isUserConnected() {
-        
-    }
-
     return(
         <div className={styles.main}>
             <button className={styles.home}  onClick={home}>            
                 <img src="/images/croissants.webp" alt="croissant" />
             </button>
-            <button className={styles.deconnexion} onClick={deconnexion}>Deconnexion</button>
+            {userInfo != null && (
+                <button className={styles.deconnexion} onClick={deconnexion}>Deconnexion</button>
+            )}
         </div>
     );
 }

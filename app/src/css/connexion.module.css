@@ -37,3 +37,7 @@ form button:hover {
 form button:active {
     background-color: rgb(140, 103, 185);
 }
+
+form a {
+    font-size: 14px;
+}

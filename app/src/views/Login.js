@@ -28,7 +28,6 @@ function Login() {
 
     if (data.user) {
       localStorage.setItem('token', data.user)
-      //localStorage.setItem('email', email)
       dispatch(addUser({ email: email, username: data.username, token: data.user }))
       alert('Login successful')
       window.location.href = '/yummy-game'
@@ -57,6 +56,7 @@ function Login() {
         />
         <br />
         <button onClick={loginUser}>Se connecter</button>
+        <a href="/register">Clique ici si tu n'as pas de compte</a>
       </form>
     </div>
   );
