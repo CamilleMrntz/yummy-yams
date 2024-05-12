@@ -16,8 +16,5 @@ facilitate the winning
 maybe add a numberOfPastriesWon in user and if chancesLeft = 1 && pastriesWon == 0
 
 
-// Register
-Email deja utilisé, se connecter (BOUTON)
-
 // TOKEN
 Gérer l'expiration du token (isExpired dans yummy-game)
