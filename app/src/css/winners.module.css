@@ -9,6 +9,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    padding-bottom: 10vh;
 }
 
 .winner_card {
@@ -17,9 +18,6 @@
     grid-template-columns: repeat(4, 1fr);
 }
 
-/* .winner_card_only {
-    border: 2px solid grey;
-} */
 
 .winner_title {
     font-weight: bold;
@@ -27,4 +25,17 @@
 
 .winner_card p {
     text-align: center;
+}
+
+.winner_card div {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    gap: 5px;
+}
+
+.winner_card div img {
+    width: 45px;
+    aspect-ratio: 1;
+    border-radius: 3px;
 }

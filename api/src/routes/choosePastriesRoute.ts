@@ -36,6 +36,7 @@ router.post("/choose-pastries", async(req, res) => {
         // create a winner
         const winner = await Winner.create({
           userName: user.name,
+          email: user.email,
           date: req.body.winningDate,
           numberOfPastriesWon: req.body.numberOfPastriesWon,
           pastries: req.body.pastriesChoosed,
