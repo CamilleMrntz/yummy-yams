@@ -18,3 +18,6 @@ maybe add a numberOfPastriesWon in user and if chancesLeft = 1 && pastriesWon ==
 
 // TOKEN
 Gérer l'expiration du token (isExpired dans yummy-game)
+
+// ChoosePastries
+Faire que l'utilisateur peut supprimer une patisserie

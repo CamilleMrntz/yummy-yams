@@ -105,7 +105,7 @@ function ChoosePastries() {
             </div>
             )}
             <p className={styles.warning_message}>{warningMessage}</p>
-            <p>pâtisseries choisis : </p>
+            <p>pâtisseries choisies : </p>
             <div className="pastries_choosed"></div>
             <button onClick={() => confirmSelection(pastriesChoosed)}>Choisir</button>
         </div>

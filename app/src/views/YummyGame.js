@@ -17,7 +17,6 @@ const YummyGame = () => {
 
     if (userInfo != null) {
         token = userInfo.token
-        //console.log("token : " + token)
     } else {
         token = null
         window.location.href = '/'
@@ -113,13 +112,8 @@ const YummyGame = () => {
             }
             if (data.numberOfPastriesWon !== 0) {
                 console.log("pastries won : " + data.numberOfPastriesWon)
-                // STORE use in choosePastries
                 dispatch(updateUser({ field: 'numberOfPastriesWon', value: data.numberOfPastriesWon }))
                 dispatch(updateUser({ field: 'winningDate', value: new Date() }))
-                // To remove
-                //localStorage.setItem('numberOfPastriesWon', data.numberOfPastriesWon)
-                //localStorage.setItem('winningDate', new Date())
-                ////////////////
                 // play_button
                 setMessage('BRAVOOOO !!!')
                 setPlayButtonVisible(false);
