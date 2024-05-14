@@ -65,8 +65,10 @@ router.post("/rolling-dices", async(req, res) => {
         
         if (numberOfPastriesWon(dices) != 0) {
           won = numberOfPastriesWon(dices)
+          user.chancesLeft = 0
+        } else {
+          user.chancesLeft--
         }
-        user.chancesLeft--
         await user.save()
         return res.json({ dices: dices, chancesLeft: user.chancesLeft, numberOfPastriesWon: won })
   

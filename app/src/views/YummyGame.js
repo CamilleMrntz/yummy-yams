@@ -57,7 +57,7 @@ const YummyGame = () => {
                 const data = await response.json();
                 dispatch(updateUser({ field: 'chancesLeft', value: data }));
                 console.log("Chances left:", data);
-                setMessage(data <= 0 ? 'Tu as déjà lancé les dés 3 fois.' : `Bienvenue dans le jeu ${userInfo.username}. Tu peux lancer les dés encore ${data} fois pour tenter de remporter des pâtisseries.`);
+                setMessage(data <= 0 ? 'Tu as déjà lancé les dés 3 fois.' : `A toi de jouer ${userInfo.username} ! Tu peux lancer les dés encore ${data} fois pour tenter de remporter des pâtisseries.`);
             } else {
                 console.error("Failed to fetch chances left:", response.statusText);
             }
@@ -121,12 +121,14 @@ const YummyGame = () => {
                     navigate('/choose-pastries');
                 }});
             } else {
-                setMessage(data.chancesLeft === 0 ? 'Tu as déjà lancé les dés 3 fois.' : 'Bienvenue dans le jeu ' + userInfo.username + '. Tu peux lancer les dés encore ' + data.chancesLeft + ' fois.')
+                setMessage(data.chancesLeft === 0 ? 'Tu as déjà lancé les dés 3 fois.' : 'A toi de jouer ' + userInfo.username + ' ! Tu peux lancer les dés encore ' + data.chancesLeft + ' fois.')
             }
             setDices(data.dices)
         } else {
             const errorResponse = await response.json()
             console.error(errorResponse)
+            alert("Veuillez vous reconnecter.")
+            navigate('/login')
         }
     }
 
