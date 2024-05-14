@@ -117,7 +117,7 @@ const YummyGame = () => {
                 // play_button
                 setMessage('BRAVOOOO !!!')
                 setPlayButtonVisible(false);
-                gsap.to(".yourComponent", { duration: 5, opacity: 0, onComplete: () => {
+                gsap.to(".component", { duration: 5, opacity: 0, onComplete: () => {
                     navigate('/choose-pastries');
                 }});
             } else {
