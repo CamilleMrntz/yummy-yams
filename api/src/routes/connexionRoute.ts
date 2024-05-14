@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 
 import User from "../models/users"
 import SECRET from "../constants/jwtSecret"
+import Winner from "../models/winners"
 
 const router = express.Router()
 
@@ -52,9 +53,14 @@ router.post('/login', async (req, res) => {
         SECRET,
         { expiresIn: '1 hours' },
       );
+    
+      const winner = await Winner.findOne({ email: user.email })
+      if (winner) {
+        return res.json({ status: 'ok', user: token, username: user.name, chancesLeft: user.chancesLeft, winner: true });
+      } else {
+        return res.json({ status: 'ok', user: token, username: user.name, chancesLeft: user.chancesLeft, winner: false });
+      }
 
-      console.log(token);
-      return res.json({ status: 'ok', user: token, username: user.name });
     } else {
       return res.json({ status: 'error', user: false, message: 'passwords are not matching' });
     }

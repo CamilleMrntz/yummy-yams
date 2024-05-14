@@ -1,10 +1,25 @@
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
+import { useSelector } from 'react-redux';
 import styles from './../css/home.module.css';
 
 function Home() {
+    const userInfo = useSelector((state) => state.user.value)
 
     const navigate = useNavigate()
+
+    const [pictures, setPictures] = useState([])
+    const [isTheGameOver, setIsTheGameOver] = useState()
+    const [isUserConnected, setIsUserConnected] = useState()
+    const [userCanPlay, setUserCanPlay] = useState()
+
+    if (userInfo.chancesLeft == 0 || userInfo.winner) {
+        setUserCanPlay(false)
+    } else {
+        setUserCanPlay(true)
+    }
+
+
 
     function register() {
         navigate('/register')
@@ -22,9 +37,6 @@ function Home() {
         navigate('/winners')
     }
 
-    const [pictures, setPictures] = useState([])
-    const [isTheGameOver, setIsTheGameOver] = useState()
-    const [isUserConnected, setIsUserConnected] = useState()
 
     useEffect(() => {
         fetch("http://localhost:3001/pastries-img")
@@ -67,13 +79,16 @@ function Home() {
             ) : (
                 <div className={styles.main}>
                     <h1>Yummy Yams</h1>
-                    <p>Joue et tente de gagner des pâtisseries !</p>
                     {isUserConnected ? (
-                        <div className={styles.buttons}>
-                            <button onClick={play}>Jouer</button>
-                        </div>
+                        /// CONDITION
+                            <div className={styles.buttons}>
+                                <p>Joue et tente de gagner des pâtisseries !</p>
+                                <button onClick={play}>Jouer</button>
+                            </div>
+                        
                     ) : (
                         <div className={styles.connexion}>
+                            <p>Joue et tente de gagner des pâtisseries !</p>
                             <p>Pour jouer, connecte-toi 🚀</p>
                             <div className={styles.buttons}>
                                 <button onClick={register}>Créer un compte</button>

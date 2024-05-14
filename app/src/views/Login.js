@@ -28,7 +28,7 @@ function Login() {
 
     if (data.user) {
       localStorage.setItem('token', data.user)
-      dispatch(addUser({ email: email, username: data.username, token: data.user }))
+      dispatch(addUser({ email: email, username: data.username, token: data.user, chancesLeft: data.chancesLeft, winner: data.winner }))
       alert('Login successful')
       window.location.href = '/yummy-game'
     } else {
