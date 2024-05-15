@@ -21,12 +21,15 @@ function ChoosePastries() {
         fetch("http://localhost:3001/pastries-left-to-win")
         .then(res => res.json())
         .then(
-            (stock) => {
-                // si le nombre de patisseries en stock est inferieur au nombre de patisseries gagnées
-                if (stock.length < userInfo.numberOfPastriesWon) {
-                    dispatch(updateUser({ field: 'numberOfPastriesWon', value: stock.length }));
+            (pastries) => {
+                // addition of pastries stock
+                const totalStock = pastries.reduce((accumulator, pastry) => accumulator + pastry.stock, 0);
+                console.log(totalStock)
+                // if pastries stock is less than pastries won
+                if (totalStock < userInfo.numberOfPastriesWon) {
+                    dispatch(updateUser({ field: 'numberOfPastriesWon', value: totalStock }));
                 }
-                setPastries(stock)
+                setPastries(pastries)
             }
         )
     }, []);

@@ -18,4 +18,3 @@ Faire que l'utilisateur peut supprimer une patisserie.
 
 
 docker
-winner meme si na pas choisi patisseries

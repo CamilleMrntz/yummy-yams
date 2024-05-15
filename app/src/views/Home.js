@@ -29,6 +29,10 @@ function Home() {
         navigate('/winners')
     }
 
+    function choosePastries() {
+        navigate('/choose-pastries')
+    }
+
 
     useEffect(() => {
         fetch("http://localhost:3001/pastries-img")
@@ -61,7 +65,17 @@ function Home() {
 
 
     function displayConnectedUserMessage() {
-        if (userInfo.winner) {
+        if (userInfo.numberOfPastriesChooseable > 0) {
+            return(
+                <div className={styles.choose_pastries}>
+                    <p>Bravo, tu as gagné {userInfo.numberOfPastriesWon} pâtisserie(s) !</p>
+                    <div className={styles.buttons}>
+                        <p>Clique pour choisir tes pâtisseries :</p>
+                        <button onClick={choosePastries}>😋</button>
+                    </div>
+                </div>
+            )
+        } else if (userInfo.winner) {
             return(
                 <div>
                     <p>Bravo, tu as gagné {userInfo.numberOfPastriesWon} pâtisserie(s) !</p>
@@ -88,9 +102,9 @@ function Home() {
         <div>
             {isTheGameOver ? (
                 <div className={styles.game_over}>
-                    <h1>The game is over 🥲</h1>
-
-                    <button onClick={seeWinners}>See winners</button>
+                    <h1>Le jeu est terminé 🥲. Merci d'avoir participé !</h1>
+                    <p>Voir les gagnants :</p>
+                    <button onClick={seeWinners}>⭐</button>
                 </div>
             ) : (
                 <div className={styles.main}>

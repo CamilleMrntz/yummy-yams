@@ -49,3 +49,9 @@ h1 {
   align-items: center;
   justify-content: center;
 }
+
+.choose_pastries {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
