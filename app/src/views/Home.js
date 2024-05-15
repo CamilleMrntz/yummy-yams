@@ -11,14 +11,6 @@ function Home() {
     const [pictures, setPictures] = useState([])
     const [isTheGameOver, setIsTheGameOver] = useState()
     const [isUserConnected, setIsUserConnected] = useState()
-    const [userCanPlay, setUserCanPlay] = useState()
-
-    if (userInfo.chancesLeft == 0 || userInfo.winner) {
-        setUserCanPlay(false)
-    } else {
-        setUserCanPlay(true)
-    }
-
 
 
     function register() {
@@ -67,6 +59,30 @@ function Home() {
 
     }, []);
 
+
+    function displayConnectedUserMessage() {
+        if (userInfo.winner) {
+            return(
+                <div>
+                    <p>Bravo, tu as gagné {userInfo.numberOfPastriesWon} pâtisserie(s) !</p>
+                </div>
+            )
+        } else if (userInfo.chancesLeft == 0) {
+            return(
+                <div>
+                    <p>Merci d'avoir tenté ta chance {userInfo.name} !</p>
+                </div>
+            )
+        } else {
+            return(
+                <div>
+                    <p>Joue et tente de gagner des pâtisseries !</p>
+                    <button onClick={play}>Jouer</button>
+                </div>
+            )
+        }
+    }
+
     
     return(
         <div>
@@ -80,12 +96,7 @@ function Home() {
                 <div className={styles.main}>
                     <h1>Yummy Yams</h1>
                     {isUserConnected ? (
-                        /// CONDITION
-                            <div className={styles.buttons}>
-                                <p>Joue et tente de gagner des pâtisseries !</p>
-                                <button onClick={play}>Jouer</button>
-                            </div>
-                        
+                        displayConnectedUserMessage()
                     ) : (
                         <div className={styles.connexion}>
                             <p>Joue et tente de gagner des pâtisseries !</p>

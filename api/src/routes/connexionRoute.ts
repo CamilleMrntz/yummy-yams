@@ -55,10 +55,12 @@ router.post('/login', async (req, res) => {
       );
     
       const winner = await Winner.findOne({ email: user.email })
+
       if (winner) {
-        return res.json({ status: 'ok', user: token, username: user.name, chancesLeft: user.chancesLeft, winner: true });
+        const numberOfPastriesWon: number = winner.numberOfPastriesWon
+        return res.json({ status: 'ok', user: token, username: user.name, chancesLeft: user.chancesLeft, winner: true, numberOfPastriesWon: numberOfPastriesWon });
       } else {
-        return res.json({ status: 'ok', user: token, username: user.name, chancesLeft: user.chancesLeft, winner: false });
+        return res.json({ status: 'ok', user: token, username: user.name, chancesLeft: user.chancesLeft, winner: false, numberOfPastriesWon: 0 });
       }
 
     } else {

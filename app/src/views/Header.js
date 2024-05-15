@@ -15,6 +15,7 @@ function Header() {
         localStorage.removeItem('token')
         const email = localStorage.getItem('email')
         dispatch(deleteUser({ email: email }))
+        localStorage.removeItem('email')
         window.location.href = '/'
     }
 

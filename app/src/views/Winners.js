@@ -57,12 +57,6 @@ function formatTime(dateOfwinning) {
           ))}
         </section>
       )}
-      <section>
-        <h2>Podium</h2>
-        <p>🥇</p>
-        <p>🥈</p>
-        <p>🥉</p>
-      </section>
     </div>
   );
 }

@@ -32,21 +32,7 @@ router.get("/chances-left/:email", async (req, res) => {
 
 
 router.post("/rolling-dices", async(req, res) => {
-    // let dices = [
-    //   getRandomNumber(),
-    //   getRandomNumber(),
-    //   getRandomNumber(),
-    //   getRandomNumber(),
-    //   getRandomNumber()
-    // ]
-    let dices = [
-      4,
-      4,
-      4,
-      4,
-      getRandomNumber()
-    ]
-    console.log(dices)
+    let dices: number[] = []
   
     const token: string = req.headers['x-access-token'] as string;
   
@@ -61,6 +47,13 @@ router.post("/rolling-dices", async(req, res) => {
         if (user.chancesLeft <= 0) {
           dices = [0, 0, 0, 0, 0]
           return res.json({ status: 'error', error: 'No more changes. The dices have been rolled 3 times', chancesLeft: user.chancesLeft, dices: dices, numberOfPastriesWon: won })
+        }
+
+        // Give more chance to win for the user if it is his last attempt
+        if (user.chancesLeft == 1) {
+          dices = Array.from({length: 5}, () => getRandomNumberKind());
+        } else {
+          dices = Array.from({length: 5}, () => getRandomNumber());
         }
         
         if (numberOfPastriesWon(dices) != 0) {
@@ -89,6 +82,10 @@ function getRandomNumber() {
     return Math.floor(Math.random() * 6) + 1;
 }
 
+function getRandomNumberKind() {
+  return Math.floor(Math.random() * 5) + 1;
+}
+
   
 function numberOfPastriesWon(dices: Array<number>) {
     if (isThereFiveIndenticalNumbers(dices)) {
@@ -111,7 +108,7 @@ function isThereTwoPairs(dices: Array<number>) {
     // Compter le nombre de paires
     let pairCount = 0;
     for (const value of Object.values(occurrences)) {
-        if (value === 2) {
+        if (value === 2 || value === 3) {
             pairCount++;
         }
     }

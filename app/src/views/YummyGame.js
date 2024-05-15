@@ -45,7 +45,7 @@ const YummyGame = () => {
         fetchData()
     }, [])
 
-    // Put chancesLeft in the sotre and remove this function ?
+    // Put chancesLeft in the store and remove this function ?
     async function fetchChancesLeft(email) {
         try {
             const response = await fetch(`http://localhost:3001/chances-left/${email}`, {
@@ -111,16 +111,17 @@ const YummyGame = () => {
                 console.error("Cannot roll dices more than 3 times:", data);
             }
             if (data.numberOfPastriesWon !== 0) {
-                console.log("pastries won : " + data.numberOfPastriesWon)
                 dispatch(updateUser({ field: 'numberOfPastriesWon', value: data.numberOfPastriesWon }))
                 dispatch(updateUser({ field: 'winningDate', value: new Date() }))
+                dispatch(updateUser({ field: 'winner', value: true }))
+                dispatch(updateUser({ field: 'chancesLeft', value: data.chancesLeft }))
                 // play_button
-                setMessage('BRAVOOOO !!!')
                 setPlayButtonVisible(false);
-                gsap.to(".component", { duration: 5, opacity: 0, onComplete: () => {
+                gsap.to(".component", { duration: 6, opacity: 0, onComplete: () => {
                     navigate('/choose-pastries');
                 }});
             } else {
+                dispatch(updateUser({ field: 'chancesLeft', value: data.chancesLeft }))
                 setMessage(data.chancesLeft === 0 ? 'Tu as déjà lancé les dés 3 fois.' : 'A toi de jouer ' + userInfo.username + ' ! Tu peux lancer les dés encore ' + data.chancesLeft + ' fois.')
             }
             setDices(data.dices)
