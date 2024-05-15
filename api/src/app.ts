@@ -15,7 +15,7 @@ const port = 3001
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect('mongodb://localhost:27017/yams_db', {})  // mongo:27017 pour lancer avec docker  // localhost:27017 pour lancer en local
+mongoose.connect('mongodb://mongo:27017/yams_db', {})  // mongo:27017 pour lancer avec docker  // localhost:27017 pour lancer en local
 .then(() => {
   console.log('Connexion à MongoDB réussie')
 })
