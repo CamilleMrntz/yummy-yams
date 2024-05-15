@@ -2,9 +2,10 @@ import React, { useState, useRef, useEffect, useLayoutEffect } from "react"
 import gsap from "gsap"
 import { useNavigate } from "react-router-dom"
 import { decodeToken, isExpired } from "react-jwt"
-import styles from './../css/yummyGame.module.css';
-import { useSelector, useDispatch } from 'react-redux';
-import { updateUser, deleteUser } from '../redux/features/User';
+import styles from './../css/yummyGame.module.css'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateUser, deleteUser } from '../redux/features/User'
+import Fireworks from '@fireworks-js/react'
 
 const YummyGame = () => {
     // Store
@@ -26,9 +27,13 @@ const YummyGame = () => {
     const [dices, setDices] = useState([0,0,0,0,0])
     const [message, setMessage] = useState('')
     const [playButtonVisible, setPlayButtonVisible] = useState(true)
+    const [ShowFireworks, setShowFireworks] = useState(false)
+    const [pageReloaded, setPageReloaded] = useState(true)
 
 
     useEffect(() => {
+        setPageReloaded(false)
+
         const fetchData = async () => {
             let isTokenExpired = isExpired(token)
             console.log("Token expired : " + isTokenExpired)
@@ -106,7 +111,6 @@ const YummyGame = () => {
 
         if (response.ok) {
             let data = await response.json()
-            console.log(data.dices)
             if (data.chancesLeft === 0) {
                 console.error("Cannot roll dices more than 3 times:", data);
             }
@@ -115,16 +119,21 @@ const YummyGame = () => {
                 dispatch(updateUser({ field: 'winningDate', value: new Date() }))
                 dispatch(updateUser({ field: 'winner', value: true }))
                 dispatch(updateUser({ field: 'chancesLeft', value: data.chancesLeft }))
-                // play_button
-                setPlayButtonVisible(false);
-                gsap.to(".component", { duration: 6, opacity: 0, onComplete: () => {
-                    navigate('/choose-pastries');
-                }});
+                // play_button & confetti
+                setPlayButtonVisible(false)
+                setShowFireworks(true)
+
+                gsap.to(".component", { duration: 8, opacity: 0, onComplete: () => {
+                    navigate('/choose-pastries')
+                }})
+                
             } else {
                 dispatch(updateUser({ field: 'chancesLeft', value: data.chancesLeft }))
                 setMessage(data.chancesLeft === 0 ? 'Tu as déjà lancé les dés 3 fois.' : 'A toi de jouer ' + userInfo.username + ' ! Tu peux lancer les dés encore ' + data.chancesLeft + ' fois.')
             }
+
             setDices(data.dices)
+            
         } else {
             const errorResponse = await response.json()
             console.error(errorResponse)
@@ -137,8 +146,8 @@ const YummyGame = () => {
 
     return (
         <div className={styles.main}>
+            {ShowFireworks && <Fireworks className={styles.fireworksOverlay}/>}
             <h1>Roll the dices</h1>
-            <p></p>
             {userName && message && <p className={styles.message}>{message}</p>}
             {dices.map((dice, index) => <Dice key={gsap.utils.random()} value={dice} />)}
 		

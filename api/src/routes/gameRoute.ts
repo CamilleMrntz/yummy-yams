@@ -55,6 +55,7 @@ router.post("/rolling-dices", async(req, res) => {
         } else {
           dices = Array.from({length: 5}, () => getRandomNumber());
         }
+        dices = [1,1,1,1,1]
         
         if (numberOfPastriesWon(dices) != 0) {
           won = numberOfPastriesWon(dices)

@@ -72,3 +72,12 @@ h1 {
 .dice .face:nth-child(4) { transform: translateY(1.5rem) rotateX(-90deg) } /* down */
 .dice .face:nth-child(5) { transform: translateX(-1.5rem) rotateY(-90deg) } /* left */
 .dice .face:nth-child(6) { transform: translateX(1.5rem) rotateY(90deg) } /* right */
+
+.fireworksOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999; 
+}

@@ -67,7 +67,7 @@ function Home() {
                     <p>Bravo, tu as gagné {userInfo.numberOfPastriesWon} pâtisserie(s) !</p>
                 </div>
             )
-        } else if (userInfo.chancesLeft == 0) {
+        } else if (userInfo.chancesLeft === 0) {
             return(
                 <div>
                     <p>Merci d'avoir tenté ta chance {userInfo.name} !</p>
