@@ -10,8 +10,6 @@ const router = express.Router()
 
 // REGISTRATION
 router.post('/registration', async (req, res) => {
-  console.log(req.body)
-
   try {
     const hashedPassword: string = await encryptPassword(req.body.password);
 
@@ -33,16 +31,12 @@ router.post('/registration', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-    console.log(user)
 
     if (!user) {
       return res.json({ status: 'error', user: false, message: 'user does not exist' });
     }
 
     const passwordMatch: boolean = await argon2.verify(user.password, req.body.password);
-    console.log(passwordMatch)
-
-    console.log("secret " + SECRET)
 
     if (passwordMatch) {
       const token = jwt.sign(

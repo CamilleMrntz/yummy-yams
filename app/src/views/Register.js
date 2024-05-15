@@ -11,6 +11,18 @@ function Register() {
   const navigate = useNavigate()
 
   async function registerUser(event) {
+    if (name === "") {
+      alert("le nom d'utilisateur est vide. Veuillez le renseigner.")
+      return
+    } else if (email === "") {
+      alert("l'email est vide. Veuillez le renseigner.")
+      return
+    } else if (password === "") {
+      alert("le mot de passe est vide. Veuillez le renseigner.")
+      return
+    }
+
+
     event.preventDefault()
     const response = await fetch('http://localhost:3001/registration', {
       method: 'POST',
@@ -24,13 +36,13 @@ function Register() {
       }),
     })
 
+
     const data = await response.json()
     if (data.status === 'ok') {
       navigate('/login')
     } else {
       alert('Email déjà enregistré')
     }
-    console.log(data)
   }
 
   return (
