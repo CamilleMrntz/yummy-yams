@@ -29,18 +29,18 @@ services:
     volumes:
       - ./data:/data/db
   
-  mongo-import: 
-    image: mongo:latest
-    volumes: 
-      - ./pastries.json:/tmp/pastries.json
-    depends_on:
-      - mongo
-    command: >
-      sh -c '
-        mongoimport --host mongo:27017 --db yams_db --collection pastries --jsonArray --type json --file /tmp/pastries.json &&
-        mongo --host mongo:27017 <<EOF
-        use yams_db
-        db.createCollection("users")
-        db.createCollection("winners")
-        EOF
-      '
+  # mongo-import: 
+  #   image: mongo:latest
+  #   volumes: 
+  #     - ./pastries.json:/tmp/pastries.json
+  #   depends_on:
+  #     - mongo
+  #   command: >
+  #     sh -c '
+  #       mongoimport --host mongo:27017 --db yams_db --collection pastries --jsonArray --type json --file /tmp/pastries.json &&
+  #       mongo --host mongo:27017 <<EOF
+  #       use yams_db
+  #       db.createCollection("users")
+  #       db.createCollection("winners")
+  #       EOF
+  #     '

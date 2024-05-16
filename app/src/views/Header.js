@@ -13,8 +13,7 @@ function Header() {
 
     function deconnexion() {
         localStorage.removeItem('token')
-        const email = localStorage.getItem('email')
-        dispatch(deleteUser({ email: email }))
+        dispatch(deleteUser())
         localStorage.removeItem('email')
         window.location.href = '/'
     }

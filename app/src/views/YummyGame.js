@@ -115,6 +115,7 @@ const YummyGame = () => {
                 console.error("Cannot roll dices more than 3 times:", data);
             }
             if (data.numberOfPastriesWon !== 0) {
+                setMessage("")
                 dispatch(updateUser({ field: 'numberOfPastriesWon', value: data.numberOfPastriesWon }))
                 dispatch(updateUser({ field: 'winningDate', value: new Date() }))
                 dispatch(updateUser({ field: 'winner', value: true }))
